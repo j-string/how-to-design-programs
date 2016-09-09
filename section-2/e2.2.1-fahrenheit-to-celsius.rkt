@@ -4,7 +4,6 @@
 ; Consumes a temperature measured in Fahrenheit and produces the Celsius equivalent.
 
 (define (fahrenheit->celsius x)
-  (* x x))
+  (/ (* (- x 32) 5) 9))
 
-(fahrenheit->celsius 5)
 
