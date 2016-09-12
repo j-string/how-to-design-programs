@@ -13,8 +13,8 @@
 (define-struct circle (center radius color))
 
 ;; DATA EXAMPLES
-(make-circle (make-posn 5 5) 5 'red)
-(make-circle (make-posn 50 50) 10 'yellow)
+;(make-circle (make-posn 5 5) 5 'red)
+;(make-circle (make-posn 50 50) 10 'yellow)
 
 #|
 ;; TEMPLATE
@@ -26,10 +26,88 @@
 |#
 
 
-;; draw-a-circle : circle -> boolean
+;; draw-a-circle : circle -> true
 (define (draw-a-circle a-circle)
   (draw-circle (circle-center a-circle)
                (circle-radius a-circle)
                (circle-color a-circle) ))
+
+;; TESTS
+;(start 300 300)
+;(draw-a-circle (make-circle (make-posn 150 150) 50 'blue))
+
+
+;; Consumes a circle and a position and determines if the pixel is inside the circle.
+(define (in-circle? a-circle posn)
+  (<= (sqrt
+       (+
+        (sqr (- (posn-x posn) (posn-x (circle-center a-circle))))
+        (sqr (- (posn-y posn) (posn-y (circle-center a-circle))))))
+      (circle-radius a-circle)))
+
+;; TESTS
+;(in-circle? (make-circle (make-posn 6 2) 1 'red) (make-posn 6 2))
+;(not (in-circle? (make-circle (make-posn 6 2) 1 'red) (make-posn 8 6)))
+
+
+;; translate-circle : circle -> circle
+(define (translate-circle a-circle delta)
+  (make-circle
+   (make-posn
+    (+ delta (posn-x (circle-center a-circle)))
+    (posn-y (circle-center a-circle)))
+   (circle-radius a-circle)
+   (circle-color a-circle)))
+  
+  
+;; TESTS
+(= 13 (posn-x (circle-center (translate-circle (make-circle (make-posn 10 10) 5 'red) 3))))
+(= 10 (posn-y (circle-center (translate-circle (make-circle (make-posn 10 10) 5 'red) 3))))
+(= 5 (circle-radius (make-circle (make-posn 10 10) 5 'red)))
+(symbol=? 'red (circle-color (make-circle (make-posn 10 10) 5 'red)))
+
+  
+  
+;; clear-a-circle : circle -> true
+(define (clear-a-circle a-circle)
+  (clear-circle (circle-center a-circle)
+                (circle-radius a-circle)))
+  
+;; EXAMPLES
+;(start 100 100)
+;(draw-a-circle (make-circle (make-posn 50 50) 25 'red))
+;(clear-a-circle (make-circle (make-posn 50 50) 25 'red))
+  
+  
+;; draw-and-clear-circle : circle -> true
+(define (draw-and-clear a-circle)
+  (and (draw-a-circle a-circle)
+       (sleep-for-a-while 1)
+       (clear-a-circle a-circle) ))
+  
+;; EXAMPLES
+;(start 100 100)
+;(draw-and-clear-circle (make-circle (make-posn 50 50) 25 'red))
+  
+  
+;; move-circle : circle -> circle
+(define (move-circle delta a-circle)
+  (cond
+    [(draw-and-clear a-circle) (translate-circle a-circle delta) ]
+    [else a-circle]))
+  
+;; EXAMPLES
+(start 500 100)
+(draw-a-circle
+ (move-circle 10
+  (move-circle 10
+   (move-circle 10
+    (move-circle 10
+     (move-circle 10
+      (move-circle 10
+       (move-circle 10
+        (move-circle 10
+         (move-circle 10
+          (make-circle (make-posn 20 20) 10 'red)))))))))))
   
   
